@@ -3,8 +3,8 @@ using System;
 using FiapFinBank.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Oracle.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
@@ -17,98 +17,118 @@ namespace FiapFinBank.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("rm93032")
                 .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FinBank.Api.Models.Cliente", b =>
+            modelBuilder.Entity("FiapFinBank.Api.Models.Cliente", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Cpf")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)")
+                        .HasColumnName("CPF");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("EMAIL");
 
                     b.Property<string>("NomeCompleto")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("NOMECOMPLETO");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clientes", "rm93032");
+                    b.ToTable("CLIENTES", (string)null);
                 });
 
-            modelBuilder.Entity("FinBank.Api.Models.ContaBancaria", b =>
+            modelBuilder.Entity("FiapFinBank.Api.Models.ContaBancaria", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Agencia")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("AGENCIA");
 
                     b.Property<int>("ClienteId")
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int")
+                        .HasColumnName("CLIENTEID");
 
                     b.Property<string>("NumeroConta")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("NUMEROCONTA");
 
                     b.Property<string>("TipoConta")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("TIPOCONTA");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
 
-                    b.ToTable("ContasBancarias", "rm93032");
+                    b.ToTable("CONTASBANCARIAS", (string)null);
                 });
 
-            modelBuilder.Entity("FinBank.Api.Models.Transacao", b =>
+            modelBuilder.Entity("FiapFinBank.Api.Models.Transacao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ContaBancariaId")
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int")
+                        .HasColumnName("CONTABANCARIAID");
 
                     b.Property<DateTime>("Data")
-                        .HasColumnType("TIMESTAMP(7)");
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATA");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("TIPO");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("DECIMAL(18, 2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("VALOR");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ContaBancariaId");
 
-                    b.ToTable("Transacoes", "rm93032");
+                    b.ToTable("TRANSACOES", (string)null);
                 });
 
-            modelBuilder.Entity("FinBank.Api.Models.ContaBancaria", b =>
+            modelBuilder.Entity("FiapFinBank.Api.Models.ContaBancaria", b =>
                 {
-                    b.HasOne("FinBank.Api.Models.Cliente", "Cliente")
+                    b.HasOne("FiapFinBank.Api.Models.Cliente", "Cliente")
                         .WithMany("Contas")
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -117,9 +137,9 @@ namespace FiapFinBank.Api.Migrations
                     b.Navigation("Cliente");
                 });
 
-            modelBuilder.Entity("FinBank.Api.Models.Transacao", b =>
+            modelBuilder.Entity("FiapFinBank.Api.Models.Transacao", b =>
                 {
-                    b.HasOne("FinBank.Api.Models.ContaBancaria", "ContaBancaria")
+                    b.HasOne("FiapFinBank.Api.Models.ContaBancaria", "ContaBancaria")
                         .WithMany("Transacoes")
                         .HasForeignKey("ContaBancariaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -128,12 +148,12 @@ namespace FiapFinBank.Api.Migrations
                     b.Navigation("ContaBancaria");
                 });
 
-            modelBuilder.Entity("FinBank.Api.Models.Cliente", b =>
+            modelBuilder.Entity("FiapFinBank.Api.Models.Cliente", b =>
                 {
                     b.Navigation("Contas");
                 });
 
-            modelBuilder.Entity("FinBank.Api.Models.ContaBancaria", b =>
+            modelBuilder.Entity("FiapFinBank.Api.Models.ContaBancaria", b =>
                 {
                     b.Navigation("Transacoes");
                 });

@@ -1,21 +1,18 @@
-using FiapFinBank.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using FiapFinBank.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adiciona os serviços
+// Adiciona o contexto com SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
-
-// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configura o pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -23,9 +20,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
